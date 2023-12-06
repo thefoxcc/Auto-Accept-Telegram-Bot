@@ -22,6 +22,7 @@ async def handle_autoAccept(bot: Client, message: ChatJoinRequest):
 
             else:
                 await bot.send_message(chat_id=user.id, text=Config.WELCOME_MSG.format(user=user.mention, title=chat.title))
+                
     except Exception as e:
         print('Error on line {}'.format(
             sys.exc_info()[-1].tb_lineno), type(e).__name__, e)
