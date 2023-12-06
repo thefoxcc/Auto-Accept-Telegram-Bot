@@ -8,22 +8,20 @@ from helper.database import db
 @Client.on_chat_join_request(filters.group | filters.channel)
 async def handle_autoAccept(bot: Client, message: ChatJoinRequest):
     try:
-        while True:
 
-            chat = message.chat
-            user = message.from_user
-            await bot.approve_chat_join_request(chat_id=chat.id, user_id=user.id)
-            await db.add_appro_user(bot, message)
-            bool_welcome = await db.get_bool_welc(Config.ADMIN)
+        chat = message.chat
+        user = message.from_user
+        await bot.approve_chat_join_request(chat_id=chat.id, user_id=user.id)
+        await db.add_appro_user(bot, message)
+        bool_welcome = await db.get_bool_welc(Config.ADMIN)
 
-            if bool_welcome:
-                welcome_messagae = await db.get_welcome(Config.ADMIN)
-                if welcome_messagae:
-                    await bot.send_message(chat_id=user.id, text=welcome_messagae.format(user=user.mention, title=chat.title))
+        if bool_welcome:
+            welcome_messagae = await db.get_welcome(Config.ADMIN)
+            if welcome_messagae:
+                await bot.send_message(chat_id=user.id, text=welcome_messagae.format(user=user.mention, title=chat.title))
 
-                else:
-                    await bot.send_message(chat_id=user.id, text=Config.WELCOME_MSG.format(user=user.mention, title=chat.title))
-            continue
+            else:
+                await bot.send_message(chat_id=user.id, text=Config.WELCOME_MSG.format(user=user.mention, title=chat.title))
     except Exception as e:
         print('Error on line {}'.format(
             sys.exc_info()[-1].tb_lineno), type(e).__name__, e)
