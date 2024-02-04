@@ -30,7 +30,7 @@ async def set_WelcomeMsg(bot:Client, message:Message):
         await db.set_welcome(message.from_user.id, welcomeMsg.text)
         await SnowDev.edit("Successfully Set Your Welcome Message ✅")
     else:
-        await message.reply_text("Invalid Command !\n⚠️ Format ➜ ```Hey, {user} Welcome to {title}``` \n\n **Reply to message**")
+        await message.reply_text("Invalid Command !\n⚠️ Format ➜ `Hey, {user} Welcome to {title}` \n\n **Reply to message**")
 
 
 
@@ -43,7 +43,7 @@ async def set_LeaveMsg(bot:Client, message:Message):
         await db.set_leave(message.from_user.id, leaveMsg.text)
         await SnowDev.edit("Successfully Set Your Leave Message ✅")
     else:
-        await message.reply_text("Invalid Command !\n⚠️ Format ➜ ```Hey, {user} By See You Again from {title}``` \n\n **Reply to message**")
+        await message.reply_text("Invalid Command !\n⚠️ Format ➜ `Hey, {user} By See You Again from {title}` \n\n **Reply to message**")
 
 
 @Client.on_message(filters.private & filters.command('option') & filters.user(Config.ADMIN))
