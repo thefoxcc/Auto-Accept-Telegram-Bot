@@ -26,7 +26,7 @@ async def handle_start(bot:Client, message:Message):
 async def set_WelcomeMsg(bot:Client, message:Message):
     welcomeMsg = message.reply_to_message
     if welcomeMsg:
-        SnowDev = message.reply_text("**Please Wait...**", reply_to_message_id=message.id)
+        SnowDev = await message.reply_text("**Please Wait...**", reply_to_message_id=message.id)
         await db.set_welcome(message.from_user.id, welcomeMsg.text)
         await SnowDev.edit("Successfully Set Your Welcome Message ✅")
     else:
