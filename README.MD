@@ -18,6 +18,12 @@
 <a href="https://telegram.me/Kdramaland"><img src="https://img.shields.io/badge/-Support%20Channel-blue.svg?style=for-the-badge&logo=Telegram"></a>
 </p>
 
+### Koyeb Deploy
+[![Deploy to Koyeb](https://www.koyeb.com/static/images/deploy/button.svg)](https://app.koyeb.com/deploy?type=git&repository=github.com/Snowball-0/Auto-Accept-Telegram-Bot&env[BOT_TOKEN]&env[API_ID]&env[API_HASH]&env[ADMIN]&env[DB_URL]&env[START_PIC]&env[LOG_CHANNEL]&run_command=python%20bot.py&branch=main&name=Auto-Accept-Telegram-Bot)
+
+### Render Deploy
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Snowball-0/Auto-Accept-Telegram-Bot)
+
 ### Heruko Deploy
 <a href="https://heroku.com/deploy?template=https://github.com/Snowball-0/Auto-Accept-Telegram-Bot">
   <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
