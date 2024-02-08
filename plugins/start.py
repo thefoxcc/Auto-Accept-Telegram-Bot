@@ -1,82 +1,112 @@
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from helper.database import db
-from config import Config
+from config import Config, TxT
 from helper.utils import OnWelcBtn, OnLeavBtn, OffWelcBtn, OffLeavBtn
 
+
 @Client.on_message(filters.private & filters.command('start'))
-async def handle_start(bot:Client, message:Message):
-    
+async def handle_start(bot: Client, message: Message):
+
     SnowDev = await message.reply_text(text="**Please Wait...**", reply_to_message_id=message.id)
     # Add user to database if not exist
     await db.add_user(b=bot, m=message)
-    
+
     text = f"Hi, {message.from_user.mention}\n\n I'm Auto Accept Bot I can accpet user from any channel and group just make me admin there."
 
     if Config.START_PIC:
         await SnowDev.delete()
-        await message.reply_photo(photo=Config.START_PIC, caption=text, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Developer 👨‍💻", url="https://t.me/Snowball_Official")]]))
-    
-    else:
-        await SnowDev.edit(text=text, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Developer 👨‍💻", url="https://t.me/Snowball_Official")]]))
+        await message.reply_photo(photo=Config.START_PIC, caption=text, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Developer 👨‍💻", url="https://t.me/Snowball_Official")], [InlineKeyboardButton('Help', callback_data='help')]]))
 
+    else:
+        await SnowDev.edit(text=text, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Developer 👨‍💻", url="https://t.me/Snowball_Official")], [InlineKeyboardButton('Help', callback_data='help')]]))
 
 
 @Client.on_message(filters.private & filters.command('set_welcome') & filters.user(Config.ADMIN))
-async def set_WelcomeMsg(bot:Client, message:Message):
+async def set_WelcomeMsg(bot: Client, message: Message):
     welcomeMsg = message.reply_to_message
     if welcomeMsg:
         SnowDev = await message.reply_text("**Please Wait...**", reply_to_message_id=message.id)
-        await db.set_welcome(message.from_user.id, welcomeMsg.text)
+        try:
+
+            if welcomeMsg.photo:
+                await db.set_welcome(message.from_user.id, welcomeMsg.caption)
+                await db.set_welc_file(message.from_user.id, welcomeMsg.photo.file_id)
+            elif welcomeMsg.video:
+                await db.set_welcome(message.from_user.id, welcomeMsg.caption)
+                await db.set_welc_file(message.from_user.id, welcomeMsg.video.file_id)
+            elif welcomeMsg.animation:
+                await db.set_welcome(message.from_user.id, welcomeMsg.caption)
+                await db.set_welc_file(message.from_user.id, welcomeMsg.animation.file_id)
+            else:
+                await db.set_welcome(message.from_user.id, welcomeMsg.text)
+                await db.set_welc_file(message.from_user.id, None)
+
+        except Exception as e:
+            return SnowDev.edit(e)
+
         await SnowDev.edit("Successfully Set Your Welcome Message ✅")
     else:
         await message.reply_text("Invalid Command !\n⚠️ Format ➜ `Hey, {user} Welcome to {title}` \n\n **Reply to message**")
 
 
-
 @Client.on_message(filters.private & filters.command('set_leave') & filters.user(Config.ADMIN))
-async def set_LeaveMsg(bot:Client, message:Message):
-    
+async def set_LeaveMsg(bot: Client, message: Message):
+
     leaveMsg = message.reply_to_message
     if leaveMsg:
         SnowDev = await message.reply_text("**Please Wait...**", reply_to_message_id=message.id)
-        await db.set_leave(message.from_user.id, leaveMsg.text)
+        try:
+            if leaveMsg.photo:
+                await db.set_leave(message.from_user.id, leaveMsg.caption)
+                await db.set_leav_file(message.from_user.id, leaveMsg.photo.file_id)
+            elif leaveMsg.video:
+                await db.set_leave(message.from_user.id, leaveMsg.caption)
+                await db.set_leav_file(message.from_user.id, leaveMsg.video.file_id)
+            elif leaveMsg.animation:
+                await db.set_leave(message.from_user.id, leaveMsg.caption)
+                await db.set_leav_file(message.from_user.id, leaveMsg.animation.file_id)
+            else:
+                await db.set_leave(message.from_user.id, leaveMsg.text)
+                await db.set_leav_file(message.from_user.id, None)
+
+        except Exception as e:
+            return await SnowDev.edit(e)
+
         await SnowDev.edit("Successfully Set Your Leave Message ✅")
     else:
         await message.reply_text("Invalid Command !\n⚠️ Format ➜ `Hey, {user} By See You Again from {title}` \n\n **Reply to message**")
 
 
 @Client.on_message(filters.private & filters.command('option') & filters.user(Config.ADMIN))
-async def set_bool_welc(bot:Client, message:Message):
-    
+async def set_bool_welc(bot: Client, message: Message):
+
     SnowDev = await message.reply_text("**Please Wait...**", reply_to_message_id=message.id)
-    
+
     if await db.get_bool_welc(message.from_user.id):
         if await db.get_bool_leav(message.from_user.id):
             await SnowDev.edit(text="Click the button from below to toggle Welcome & Leaving Message", reply_markup=InlineKeyboardMarkup([[OnWelcBtn, OnLeavBtn]]))
-        
+
         else:
             await SnowDev.edit(text="Click the button from below to toggle Welcome & Leaving Message", reply_markup=InlineKeyboardMarkup([[OnWelcBtn, OffLeavBtn]]))
-            
-    
+
     elif await db.get_bool_leav(message.from_user.id):
-        
+
         if await db.get_bool_welc(message.from_user.id):
             await SnowDev.edit(text="Click the button from below to toggle Welcome & Leaving Message", reply_markup=InlineKeyboardMarkup([[OnWelcBtn, OnLeavBtn]]))
-        
+
         else:
             await SnowDev.edit(text="Click the button from below to toggle Welcome & Leaving Message", reply_markup=InlineKeyboardMarkup([[OffWelcBtn, OnLeavBtn]]))
-    
+
     else:
         await SnowDev.edit(text="Click the button from below to toggle Welcome & Leaving Message", reply_markup=InlineKeyboardMarkup([[OffWelcBtn, OffLeavBtn]]))
-    
 
 
 @Client.on_callback_query()
-async def handle_CallbackQuery(bot:Client, query:CallbackQuery):
-    
+async def handle_CallbackQuery(bot: Client, query: CallbackQuery):
+
     data = query.data
-    
+
     if data.startswith('welc'):
         text = "Click the button from below to toggle Welcome & Leaving Message"
         boolean = data.split('-')[1]
@@ -85,7 +115,7 @@ async def handle_CallbackQuery(bot:Client, query:CallbackQuery):
             await db.set_bool_welc(query.from_user.id, False)
             if await db.get_bool_leav(query.from_user.id):
                 await query.message.edit(text=text, reply_markup=InlineKeyboardMarkup([[OffWelcBtn, OnLeavBtn]]))
-            
+
             else:
                 await query.message.edit(text=text, reply_markup=InlineKeyboardMarkup([[OffWelcBtn, OffLeavBtn]]))
 
@@ -93,7 +123,7 @@ async def handle_CallbackQuery(bot:Client, query:CallbackQuery):
             await db.set_bool_welc(query.from_user.id, True)
             if await db.get_bool_leav(query.from_user.id):
                 await query.message.edit(text=text, reply_markup=InlineKeyboardMarkup([[OnWelcBtn, OnLeavBtn]]))
-            
+
             else:
                 await query.message.edit(text=text, reply_markup=InlineKeyboardMarkup([[OnWelcBtn, OffLeavBtn]]))
 
@@ -105,7 +135,7 @@ async def handle_CallbackQuery(bot:Client, query:CallbackQuery):
             await db.set_bool_leav(query.from_user.id, False)
             if await db.get_bool_welc(query.from_user.id):
                 await query.message.edit(text=text, reply_markup=InlineKeyboardMarkup([[OnWelcBtn, OffLeavBtn]]))
-            
+
             else:
                 await query.message.edit(text=text, reply_markup=InlineKeyboardMarkup([[OffWelcBtn, OffLeavBtn]]))
 
@@ -113,7 +143,14 @@ async def handle_CallbackQuery(bot:Client, query:CallbackQuery):
             await db.set_bool_leav(query.from_user.id, True)
             if await db.get_bool_welc(query.from_user.id):
                 await query.message.edit(text=text, reply_markup=InlineKeyboardMarkup([[OnWelcBtn, OnLeavBtn]]))
-            
+
             else:
                 await query.message.edit(text=text, reply_markup=InlineKeyboardMarkup([[OffWelcBtn, OnLeavBtn]]))
 
+    elif data == 'help':
+        await query.message.edit(TxT.HELP_MSG, disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('✘ Close ✘', callback_data='close')]]))
+    
+    
+    elif data == 'close':
+        await query.message.delete()
+        await query.message.continue_propagation()
