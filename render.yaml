@@ -6,7 +6,7 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: python bot.py
     repo: https://github.com/Snowball-0/Auto-Accept-Telegram-Bot
-    branch: main
+    branch: master
     autoDeploy: false
     envVars:
       - key: BOT_TOKEN
