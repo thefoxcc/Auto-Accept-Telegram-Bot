@@ -11,14 +11,22 @@ class Database:
         self.db = self._client[database_name]
         self.col = self.db.users
 
-    def new_user(self, id):
+    def admin_user(self, id):
         return dict(
             id=int(id),
             join_date=datetime.date.today().isoformat(),
+            welc_file=None,
+            leav_file=None,
             welcome=None,
             leave = None,
             bool_welc = None,
             bool_leav = None
+        )
+    
+    def new_user(self, id):
+        return dict(
+            id = int(id),
+            join_date=datetime.datetime.today().isoformat()
         )
 
     def approved_user(self, id):
@@ -31,6 +39,20 @@ class Database:
     async def get_welcome(self, id):
         user = await self.col.find_one({'id': int(id)})
         return user.get('welcome', None)
+    
+    async def set_welc_file(self, user_id, welc_file):
+        await self.col.update_one({'id': int(user_id)}, {'$set': {'welc_file': welc_file}})
+
+    async def get_welc_file(self, id):
+        user = await self.col.find_one({'id': int(id)})
+        return user.get('welc_file', None)
+    
+    async def set_leav_file(self, user_id, leav_file):
+        await self.col.update_one({'id': int(user_id)}, {'$set': {'leav_file': leav_file}})
+
+    async def get_leav_file(self, id):
+        user = await self.col.find_one({'id': int(id)})
+        return user.get('leav_file', None)
 
     async def set_leave(self, user_id, leave):
         await self.col.update_one({'id': int(user_id)}, {'$set': {'leave': leave}})
@@ -56,7 +78,11 @@ class Database:
     async def add_user(self, b, m):
         u = m.from_user
         if not await self.is_user_exist(u.id):
-            user = self.new_user(u.id)
+            if u.id == Config.ADMIN:
+                user = self.admin_user(u.id)
+            else:
+                user = self.new_user(u.id)
+                
             await self.col.insert_one(user)
             await send_log(b, u)
 
