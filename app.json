@@ -42,7 +42,7 @@
         },
         
         "START_PIC": {
-            "description": "Your Bot start cmd Pic from @HK_telegraph_BOT",
+            "description": "Your Bot start cmd Pic from @TeleXgraphXBot",
             "value": "",
             "required": false
             
