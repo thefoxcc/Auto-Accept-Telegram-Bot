@@ -13,21 +13,18 @@
 
 <b>Automate group joins, broadcast messages; channels get scheduled broadcasts, analytics</b>
 
-
 <p align="center">
 <a href="https://telegram.me/Kdramaland"><img src="https://img.shields.io/badge/-Support%20Channel-blue.svg?style=for-the-badge&logo=Telegram"></a>
 </p>
 
-### Koyeb Deploy
-[![Deploy to Koyeb](https://www.koyeb.com/static/images/deploy/button.svg)](https://app.koyeb.com/deploy?type=git&repository=github.com/Snowball-0/Auto-Accept-Telegram-Bot&env[BOT_TOKEN]&env[API_ID]&env[API_HASH]&env[ADMIN]&env[DB_URL]&env[START_PIC]&env[LOG_CHANNEL]&run_command=python%20bot.py&branch=main&name=Auto-Accept-Telegram-Bot)
-
-### Render Deploy
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Snowball-0/Auto-Accept-Telegram-Bot)
-
 ### Heruko Deploy
+
 <a href="https://heroku.com/deploy?template=https://github.com/Snowball-0/Auto-Accept-Telegram-Bot">
   <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
 </a>
+
+### Render Deploy
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Snowball-0/Auto-Accept-Telegram-Bot)
 
 ## Config Varies
 
@@ -45,7 +42,7 @@
 
 <b>`START_PIC`</b> : **Start Message Photo. You Don't Need This! Just Skip**
 
-### 💠 Bot Commands 
+### 💠 Bot Commands
 
 ```
 # User Commmands
@@ -58,8 +55,11 @@ Option - Toggle join request message & leave message [OWNER]
 Status - Check database status [OWNER]
 Restart - Restart the bot [OWNER]
 Broadcast - Broadcast Message [OWNER]
+Acceptall - To accept all the pending join requests [OWNER]
+Declineall - To decline all the pending join requests [OWNER]
 
 ```
 
 ### Developer
-- [AutoApprove Bot by SnowBall](https://t.me/Snowball_Official)
+
+- [AutoApprove Bot by SnowBall](https://t.me/Snowball_Official) ❄️
