@@ -8,6 +8,8 @@ OnWelcBtn = InlineKeyboardButton(text='Welcome On ✅', callback_data='welc-on')
 OffWelcBtn = InlineKeyboardButton(text='Welcome Off ❌', callback_data='welc-off')
 OnLeavBtn = InlineKeyboardButton(text='Leave On ✅', callback_data='leav-on')
 OffLeavBtn = InlineKeyboardButton(text='Leave Off ❌', callback_data='leav-off')
+OnAutoacceptBtn = InlineKeyboardButton(text='Auto accept On ✅', callback_data='autoaccept-on')
+OffAutoacceptBtn = InlineKeyboardButton(text='Auto accept Off ❌', callback_data='autoaccept-off')
 
 async def send_log(b, u):
     if Config.LOG_CHANNEL is not None:
