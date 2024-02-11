@@ -50,6 +50,7 @@ async def handle_autoAccept(bot: Client, message: ChatJoinRequest):
 @Client.on_chat_member_updated()
 async def handle_chat(bot: Client, update: ChatMemberUpdated):
     left_user = update.old_chat_member
+
     if left_user:
         try:
             bool_leave = await db.get_bool_leav(Config.ADMIN)
@@ -72,29 +73,25 @@ async def handle_chat(bot: Client, update: ChatMemberUpdated):
             # print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno), type(e).__name__, e)
             pass
         
-    if update.new_chat_member.user.id == bot.me.id:
-        # Get the chat id
-        chat_id = update.chat.id
+    try:
+        if update.new_chat_member.user.id == bot.me.id:
+            # Get the chat id
+            chat_id = update.chat.id
         
-        # Check if the bot was promoted to admin
-        if update.new_chat_member.status == enums.ChatMemberStatus.ADMINISTRATOR:
-            # Add the channel to the bot's list if it's not already present
-            channels = await db.get_channels(Config.ADMIN)
-            if chat_id not in channels:
+            # Check if the bot was promoted to admin
+            if update.new_chat_member.status == enums.ChatMemberStatus.ADMINISTRATOR:
+                # Add the channel to the bot's list
                 await db.set_channel(Config.ADMIN, chat_id)
                 print(f"Bot was made admin in channel: {chat_id}")
-            else:
-                print(f"Bot is already admin in channel: {chat_id}")
-        
-        # Check if the bot was demoted or kicked
-        elif update.old_chat_member.status in [enums.ChatMemberStatus.LEFT, enums.ChatMemberStatus.BANNED, enums.ChatMemberStatus.ADMINISTRATOR]:
-            # Remove the channel from the bot's list if it's present
-            channels = await db.get_channels(Config.ADMIN)
-            if chat_id in channels:
-                try:
-                    await db.remove_channel(Config.ADMIN, chat_id)
-                    print(f"Bot was removed from admin in channel: {chat_id}")
-                except Exception as e:
-                    print(e)
-            else:
-                print(f"Bot was not admin in channel: {chat_id}")
+            
+    except:
+        if update.old_chat_member.user.id == bot.me.id:
+            # Get the chat id
+            chat_id = update.chat.id
+
+            # Check if the bot was demoted or kicked
+            if update.old_chat_member.status in [enums.ChatMemberStatus.LEFT, enums.ChatMemberStatus.BANNED, enums.ChatMemberStatus.ADMINISTRATOR]:
+                # Remove the channel from the bot's list
+                await db.remove_channel(Config.ADMIN, chat_id)
+                print(f"Bot was removed from admin in channel: {chat_id}")
+            
