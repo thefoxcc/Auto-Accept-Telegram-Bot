@@ -1,7 +1,7 @@
 import sys
 import logging
 import asyncio
-from pyrogram import Client, filters
+from pyrogram import Client, filters, enums
 from pyrogram.types import ChatMemberUpdated, ChatJoinRequest
 from config import Config
 from helper.database import db
@@ -39,24 +39,20 @@ async def approve_func(bot, message):
 
 @Client.on_chat_join_request(filters.group | filters.channel)
 async def handle_autoAccept(bot: Client, message: ChatJoinRequest):
-    try:
-        while True:
+    admin_permission = await db.get_bool_auto_accept(Config.ADMIN)
+    if admin_permission:
+        try:
             await approve_func(bot, message)
-
-    except FloodWait as s:
-        asyncio.sleep(s.value)
-        while True:
+        except FloodWait:
             await approve_func(bot, message)
 
 
 @Client.on_chat_member_updated()
 async def handle_chat(bot: Client, update: ChatMemberUpdated):
     left_user = update.old_chat_member
-
-    if await db.is_user_exist(left_user.user.id) and left_user:
+    if left_user:
         try:
             bool_leave = await db.get_bool_leav(Config.ADMIN)
-
             if bool_leave:
                 leave_message = await db.get_leave(Config.ADMIN)
                 photo_or_video_file = await db.get_leav_file(Config.ADMIN)
@@ -69,9 +65,28 @@ async def handle_chat(bot: Client, update: ChatMemberUpdated):
                     except:
                         await bot.send_video(chat_id=left_user.user.id, video=photo_or_video_file, caption=leave_message.format(user=left_user.user.mention, title=update.chat.title) if leave_message else Config.DEFAULT_LEAVE_MSG.format(user=left_user.user.mention, title=update.chat.title))
 
-            else:
-                await bot.send_message(chat_id=left_user.user.id, text=leave_message.format(user=left_user.user.mention, title=update.chat.title) if leave_message else Config.DEFAULT_LEAVE_MSG.format(user=left_user.user.mention, title=update.chat.title))
+                else:
+                    await bot.send_message(chat_id=left_user.user.id, text=leave_message.format(user=left_user.user.mention, title=update.chat.title) if leave_message else Config.DEFAULT_LEAVE_MSG.format(user=left_user.user.mention, title=update.chat.title))
 
-        except Exception as e:
-            print('Error on line {}'.format(
-                sys.exc_info()[-1].tb_lineno), type(e).__name__, e)
+        except:
+            # print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno), type(e).__name__, e)
+            pass
+    if update.new_chat_member.user.id == bot.me.id:
+
+        # Get the chat id
+        chat_id = update.chat.id
+    
+        # Check if the bot was promoted to admin
+        if update.new_chat_member.status == enums.ChatMemberStatus.ADMINISTRATOR:
+            # Add the channel to the bot's list
+            await db.set_channel(Config.ADMIN, chat_id)
+            print(f"Bot was made admin in channel: {chat_id}")
+        
+        # Check if the bot was demoted or kicked
+        elif update.old_chat_member.status in [enums.ChatMemberStatus.LEFT, enums.ChatMemberStatus.BANNED, enums.ChatMemberStatus.ADMINISTRATOR]:
+            # Remove the channel from the bot's list
+            try:
+                await db.remove_channel(Config.ADMIN, chat_id)
+            except Exception as e:
+                print(e)
+            print(f"Bot was removed from admin in channel: {chat_id}")
