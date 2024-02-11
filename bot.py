@@ -1,5 +1,7 @@
+import asyncio
 import logging
 import logging.config
+import warnings
 from pyrogram import Client
 from pyrogram import Client, __version__
 from pyrogram.raw.all import layer
@@ -8,6 +10,7 @@ from aiohttp import web
 from pytz import timezone
 from datetime import datetime
 from plugins.web_support import web_server
+from plugins.admin_panel import user
 
 logging.config.fileConfig('logging.conf')
 logging.getLogger().setLevel(logging.INFO)
@@ -58,5 +61,24 @@ class Bot(Client):
         logging.info("Bot Stopped 🙄")
 
 
-bot = Bot()
-bot.run()
+bot_instance = Bot()
+
+def main():
+    async def start_services():
+        if Config.SESSION:
+            await asyncio.gather(
+                user.start(),        # Start the Pyrogram Client
+                bot_instance.start()  # Start the bot instance
+            )
+        else:
+            await asyncio.gather(
+                bot_instance.start()
+            )
+        
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(start_services())
+    loop.run_forever()
+
+if __name__ == "__main__":
+    warnings.filterwarnings("ignore", message="There is no current event loop")
+    main()
