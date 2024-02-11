@@ -89,8 +89,9 @@ class Database:
         user = await self.col.find_one({'id': int(user_id)})
         if user:
             channels = user.get('channel', [])
-            channels.append(channel_id)
-            await self.col.update_one({'id': int(user_id)}, {'$set': {'channel': channels}})
+            if channel_id not in channels:
+                channels.append(channel_id)
+                await self.col.update_one({'id': int(user_id)}, {'$set': {'channel': channels}})
 
     async def get_channel(self, id):
         user = await self.col.find_one({'id': int(id)})
