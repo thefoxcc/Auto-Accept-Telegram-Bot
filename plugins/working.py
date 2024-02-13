@@ -75,23 +75,22 @@ async def handle_chat(bot: Client, update: ChatMemberUpdated):
         
     try:
         if update.new_chat_member.user.id == bot.me.id:
-            # Get the chat id
+            # Получаем идентификатор чата
             chat_id = update.chat.id
         
-            # Check if the bot was promoted to admin
+            # Проверяем, был ли бот повышен до администратора
             if update.new_chat_member.status == enums.ChatMemberStatus.ADMINISTRATOR:
-                # Add the channel to the bot's list
+                # Добавляем канал в список бота
                 await db.set_channel(Config.ADMIN, chat_id)
-                print(f"Bot was made admin in channel: {chat_id}")
+                print(f"Бот стал администратором в канале: {chat_id}")
             
     except:
         if update.old_chat_member.user.id == bot.me.id:
-            # Get the chat id
+            # Получаем идентификатор чата
             chat_id = update.chat.id
 
-            # Check if the bot was demoted or kicked
+            # Проверяем, был ли бот понижен или исключен
             if update.old_chat_member.status in [enums.ChatMemberStatus.LEFT, enums.ChatMemberStatus.BANNED, enums.ChatMemberStatus.ADMINISTRATOR]:
-                # Remove the channel from the bot's list
+                # Удаляем канал из списка бота
                 await db.remove_channel(Config.ADMIN, chat_id)
-                print(f"Bot was removed from admin in channel: {chat_id}")
-            
+                print(f"Бот был удален из администратора в канале: {chat_id}")
