@@ -9,57 +9,57 @@
 <img src="https://img.shields.io/github/forks/Snowball-0/Auto-Accept-Telegram-Bot?style=social" />
 </p>
 
-<b>HELLO...⚡</b>
+<b>ЗДРАВСТВУЙТЕ...⚡</b>
 
-<b>Automate group joins, broadcast messages; channels get scheduled broadcasts, analytics</b>
+<b>Автоматизируйте присоединение к группам, отправляйте трансляции; каналы получают запланированные трансляции, аналитику</b>
 
 <p align="center">
-<a href="https://telegram.me/Kdramaland"><img src="https://img.shields.io/badge/-Support%20Channel-blue.svg?style=for-the-badge&logo=Telegram"></a>
+<a href="https://telegram.me/Kdramaland"><img src="https://img.shields.io/badge/-Канал%20поддержки-blue.svg?style=for-the-badge&logo=Telegram"></a>
 </p>
 
-### Heruko Deploy
+### Развертывание на Heroku
 
 <a href="https://heroku.com/deploy?template=https://github.com/Snowball-0/Auto-Accept-Telegram-Bot">
-  <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
+  <img src="https://www.herokucdn.com/deploy/button.svg" alt="Развернуть">
 </a>
 
-### Render Deploy
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Snowball-0/Auto-Accept-Telegram-Bot)
+### Развертывание на Render
+[![Развернуть на Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Snowball-0/Auto-Accept-Telegram-Bot)
 
-## Config Varies
+## Переменные конфигурации
 
-<b>`API_ID`</b> : **Goto [my.telegram.org](https://my.telegram.org) to obtain this.**
+<b>`API_ID`</b> : **Перейдите на [my.telegram.org](https://my.telegram.org), чтобы получить это.**
 
-<b>`API_HASH`</b> : **Goto [my.telegram.org](https://my.telegram.org) to obtain this.**
+<b>`API_HASH`</b> : **Перейдите на [my.telegram.org](https://my.telegram.org), чтобы получить это.**
 
-<b>`BOT_TOKEN`</b> : **Get the bot token from [@BotFather](https://telegram.dog/BotFather)**
+<b>`BOT_TOKEN`</b> : **Получите токен бота от [@BotFather](https://telegram.dog/BotFather)**
 
-<b>`ADMIN`</b> : **AUTH Or Bot Controllers Id**
+<b>`ADMIN`</b> : **ID администратора или управляющего ботом**
 
-<b>`DB_URL`</b> : **Mongo Database URL From [MONGO-DB](https://cloud.mongodb.com)**
+<b>`DB_URL`</b> : **URL базы данных MongoDB из [MONGO-DB](https://cloud.mongodb.com)**
 
-<b>`LOG_CHANNEL`</b> : **Bot Logs Sending Channel. If You Don't Need This To Remove This Variable In Your Server**
+<b>`LOG_CHANNEL`</b> : **Канал для отправки логов бота. Если вам это не нужно, удалите эту переменную в своем сервере**
 
-<b>`START_PIC`</b> : **Start Message Photo. You Don't Need This! Just Skip**
+<b>`START_PIC`</b> : **Фотография для сообщения о начале. Если вам это не нужно, пропустите**
 
-### 💠 Bot Commands
-
-```
-# User Commmands
-start - To Check Bot is alive or not
-
-# Admin Commmands
-Set_Welcome - Set Welcome Message [OWNER]
-Set_Leave - Set Leave Message [OWNER]
-Option - Toggle join request message & leave message [OWNER]
-Status - Check database status [OWNER]
-Restart - Restart the bot [OWNER]
-Broadcast - Broadcast Message [OWNER]
-Acceptall - To accept all the pending join requests [OWNER]
-Declineall - To decline all the pending join requests [OWNER]
-
+### 💠 Команды бота
 ```
 
-### Developer
+Команды для пользователей
+start - Проверить, жив ли бот
 
-- [AutoApprove Bot by SnowBall](https://t.me/Snowball_Official) ❄️
+Команды для администраторов
+Set_Welcome - Установить сообщение приветствия [ВЛАДЕЛЕЦ]
+Set_Leave - Установить сообщение о покидании [ВЛАДЕЛЕЦ]
+Option - Включить/отключить сообщение о присоединении и покидании [ВЛАДЕЛЕЦ]
+Status - Проверить статус базы данных [ВЛАДЕЛЕЦ]
+Restart - Перезапустить бота [ВЛАДЕЛЕЦ]
+Broadcast - Транслировать сообщение [ВЛАДЕЛЕЦ]
+Acceptall - Принять все ожидающие запросы на присоединение [ВЛАДЕЛЕЦ]
+Declineall - Отклонить все ожидающие запросы на присоединение [ВЛАДЕЛЕЦ]
+
+```
+
+### Разработчик
+
+- [Бот AutoApprove от SnowBall](https://t.me/Snowball_Official) ❄️
