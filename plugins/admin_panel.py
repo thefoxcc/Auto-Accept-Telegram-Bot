@@ -14,38 +14,32 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-# approve all pending request is only for user for more info https://docs.pyrogram.org/api/methods/approve_all_chat_join_requests#pyrogram.Client.approve_all_chat_join_requests:~:text=Approve%20all%20pending%20join%20requests%20in%20a%20chat. only Usable by User not bot
-
-user = Client(name="AcceptUser", session_string=Config.SESSION)
-
-
+# Получение статистики бота
 @Client.on_message(filters.command(["stats", "status"]) & filters.user(Config.ADMIN))
 async def get_stats(bot, message):
     total_users = await db.total_users_count()
-    uptime = time.strftime("%Hh%Mm%Ss", time.gmtime(
-        time.time() - Config.BOT_UPTIME))
+    uptime = time.strftime("%Hч %Mм %Sс", time.gmtime(time.time() - Config.BOT_UPTIME))
     start_t = time.time()
-    st = await message.reply('**Aᴄᴄᴇꜱꜱɪɴɢ Tʜᴇ Dᴇᴛᴀɪʟꜱ.....**')
+    st = await message.reply('**Получение данных...**')
     end_t = time.time()
     time_taken_s = (end_t - start_t) * 1000
-    await st.edit(text=f"**--Bᴏᴛ Sᴛᴀᴛᴜꜱ--** \n\n**⌚️ Bᴏᴛ Uᴩᴛɪᴍᴇ:** {uptime} \n**🐌 Cᴜʀʀᴇɴᴛ Pɪɴɢ:** `{time_taken_s:.3f} ᴍꜱ` \n**👭 Tᴏᴛᴀʟ Uꜱᴇʀꜱ:** `{total_users}`")
+    await st.edit(text=f"**--Статус бота--** \n\n**⌚️ Время работы бота:** {uptime} \n**🐌 Текущий пинг:** `{time_taken_s:.3f} мс` \n**👭 Всего пользователей:** `{total_users}`")
 
 
-# Restart to cancell all process
+# Перезапуск бота
 @Client.on_message(filters.private & filters.command("restart") & filters.user(Config.ADMIN))
 async def restart_bot(b, m):
-    await m.reply_text("🔄__Rᴇꜱᴛᴀʀᴛɪɴɢ.....__")
+    await m.reply_text("🔄__Перезапуск.....__")
     os.execl(sys.executable, sys.executable, *sys.argv)
 
-# ⚠️ Broadcasting only those people who has started your bot
 
-
+# Рассылка сообщения только тем пользователям, которые начали использовать бота
 @Client.on_message(filters.command("broadcast") & filters.user(Config.ADMIN) & filters.reply)
 async def broadcast_handler(bot: Client, m: Message):
-    await bot.send_message(Config.LOG_CHANNEL, f"{m.from_user.mention} or {m.from_user.id} Iꜱ ꜱᴛᴀʀᴛᴇᴅ ᴛʜᴇ Bʀᴏᴀᴅᴄᴀꜱᴛ......")
+    await bot.send_message(Config.LOG_CHANNEL, f"{m.from_user.mention} или {m.from_user.id} начал рассылку сообщений...")
     all_users = await db.get_all_users()
     broadcast_msg = m.reply_to_message
-    sts_msg = await m.reply_text("Bʀᴏᴀᴅᴄᴀꜱᴛ Sᴛᴀʀᴛᴇᴅ..!")
+    sts_msg = await m.reply_text("Рассылка началась..!")
     done = 0
     failed = 0
     success = 0
@@ -61,11 +55,12 @@ async def broadcast_handler(bot: Client, m: Message):
             await db.delete_user(user['id'])
         done += 1
         if not done % 20:
-            await sts_msg.edit(f"Bʀᴏᴀᴅᴄᴀꜱᴛ Iɴ Pʀᴏɢʀᴇꜱꜱ: \nTᴏᴛᴀʟ Uꜱᴇʀꜱ {total_users} \nCᴏᴍᴩʟᴇᴛᴇᴅ: {done} / {total_users}\nSᴜᴄᴄᴇꜱꜱ: {success}\nFᴀɪʟᴇᴅ: {failed}")
+            await sts_msg.edit(f"Прогресс рассылки: \nВсего пользователей {total_users} \nЗавершено: {done} / {total_users}\nУспешно: {success}\nНеудачно: {failed}")
     completed_in = datetime.timedelta(seconds=int(time.time() - start_time))
-    await sts_msg.edit(f"Bʀᴏᴀᴅᴄᴀꜱᴛ Cᴏᴍᴩʟᴇᴛᴇᴅ: \nCᴏᴍᴩʟᴇᴛᴇᴅ Iɴ `{completed_in}`.\n\nTᴏᴛᴀʟ Uꜱᴇʀꜱ {total_users}\nCᴏᴍᴩʟᴇᴛᴇᴅ: {done} / {total_users}\nSᴜᴄᴄᴇꜱꜱ: {success}\nFᴀɪʟᴇᴅ: {failed}")
+    await sts_msg.edit(f"Рассылка завершена: \nЗавершено за `{completed_in}`.\n\nВсего пользователей {total_users}\nЗавершено: {done} / {total_users}\nУспешно: {success}\nНеудачно: {failed}")
 
 
+# Отправка сообщения пользователю с обработкой возможных ошибок
 async def send_msg(user_id, message):
     try:
         await message.forward(chat_id=int(user_id))
@@ -74,26 +69,27 @@ async def send_msg(user_id, message):
         await asyncio.sleep(e.value)
         return send_msg(user_id, message)
     except InputUserDeactivated:
-        logger.info(f"{user_id} : Dᴇᴀᴄᴛɪᴠᴀᴛᴇᴅ")
+        logger.info(f"{user_id} : Деактивирован")
         return 400
     except UserIsBlocked:
-        logger.info(f"{user_id} : Bʟᴏᴄᴋᴇᴅ Tʜᴇ Bᴏᴛ")
+        logger.info(f"{user_id} : Заблокировал бота")
         return 400
     except PeerIdInvalid:
-        logger.info(f"{user_id} : Uꜱᴇʀ Iᴅ Iɴᴠᴀʟɪᴅ")
+        logger.info(f"{user_id} : Неверный идентификатор пользователя")
         return 400
     except Exception as e:
         logger.error(f"{user_id} : {e}")
         return 500
 
 
+# Обработчик команды для принятия всех ожидающих запросов
 @Client.on_message(filters.private & filters.command('acceptall') & filters.user(Config.ADMIN))
 async def handle_acceptall(bot: Client, message: Message):
-    ms = await message.reply_text("**Please Wait...**", reply_to_message_id=message.id)
+    ms = await message.reply_text("**Пожалуйста, подождите...**", reply_to_message_id=message.id)
     chat_ids = await db.get_channel(Config.ADMIN)
 
     if len(list(chat_ids)) == 0:
-        return await ms.edit("**I'm not admin in any Channel or Group yet !**")
+        return await ms.edit("**Я не являюсь администратором ни в одном канале или группе!**")
 
     button = []
     for id in chat_ids:
@@ -101,16 +97,17 @@ async def handle_acceptall(bot: Client, message: Message):
         button.append([InlineKeyboardButton(
             f"{info.title} {str(info.type).split('.')[1]}", callback_data=f'acceptallchat_{id}')])
 
-    await ms.edit("Select Channel or Group Bellow Where you want to accept pending request\n\nBelow Channels or Group I'm Admin there", reply_markup=InlineKeyboardMarkup(button))
+    await ms.edit("Выберите канал или группу, в которой хотите принять ожидающие запросы на вступление\n\nНиже перечислены каналы или группы, где я являюсь администратором", reply_markup=InlineKeyboardMarkup(button))
 
 
+# Обработчик команды для отклонения всех ожидающих запросов
 @Client.on_message(filters.private & filters.command('declineall') & filters.user(Config.ADMIN))
 async def handle_declineall(bot:Client, message: Message):
-    ms = await message.reply_text("**Please Wait...**", reply_to_message_id=message.id)
+    ms = await message.reply_text("**Пожалуйста, подождите...**", reply_to_message_id=message.id)
     chat_ids = await db.get_channel(Config.ADMIN)
     
     if len(list(chat_ids)) == 0:
-        return await ms.edit("**I'm not admin in any Channel or Group yet !**")
+        return await ms.edit("**Я не являюсь администратором ни в одном канале или группе!**")
         
     button = []
     for id in chat_ids:
@@ -118,28 +115,29 @@ async def handle_declineall(bot:Client, message: Message):
         button.append([InlineKeyboardButton(
             f"{info.title} {str(info.type).split('.')[1]}", callback_data=f'declineallchat_{id}')])
 
-    await ms.edit("Select Channel or Group Bellow Where you want to accept pending request\n\nBelow Channels or Group I'm Admin there", reply_markup=InlineKeyboardMarkup(button))
+    await ms.edit("Выберите канал или группу, в которой хотите отклонить ожидающие запросы на вступление\n\nНиже перечислены каналы или группы, где я являюсь администратором", reply_markup=InlineKeyboardMarkup(button))
     
     
+# Обработчик callback-запроса для принятия всех ожидающих запросов
 @Client.on_callback_query(filters.regex('^acceptallchat_'))
 async def handle_accept_pending_request(bot: Client, update: CallbackQuery):
-    await update.message.edit("**Please Wait Accepting all the peding requests. ♻️**")
+    await update.message.edit("**Пожалуйста, подождите, принимаются все ожидающие запросы... ♻️**")
     chat_id = update.data.split('_')[1]
     try:
         await user.approve_all_chat_join_requests(chat_id=chat_id)
     except Exception as e:
-        return await update.message.edit(f"**Something Went Wrong 😵\n\n error ❗ ➜ __{e}__\n\n **ERROR !")
+        return await update.message.edit(f"**Что-то пошло не так 😵\n\n Ошибка ❗ ➜ __{e}__\n\n **ОШИБКА !")
 
-    await update.message.edit("**Task Completed** ✓ **Approved ✅ All The Pending Join Request**")
+    await update.message.edit("**Задача завершена** ✓ **Приняты ✅ все ожидающие запросы на вступление**")
 
+# Обработчик callback-запроса для отклонения всех ожидающих запросов
 @Client.on_callback_query(filters.regex('^declineallchat_'))
 async def handle_delcine_pending_request(bot: Client, update: CallbackQuery):
-    await update.message.edit("**Please Wait Declining all the peding requests. ♻️**")
+    await update.message.edit("**Пожалуйста, подождите, отклоняются все ожидающие запросы... ♻️**")
     chat_id = update.data.split('_')[1]
     try:
         await user.decline_all_chat_join_requests(chat_id=chat_id)
     except Exception as e:
-        return await update.message.edit(f"**Something Went Wrong 😵\n\n error ❗ ➜ __{e}__\n\n **ERROR !")
+        return await update.message.edit(f"**Что-то пошло не так 😵\n\n Ошибка ❗ ➜ __{e}__\n\n **ОШИБКА !")
 
-    await update.message.edit("**Task Completed** ✓ **Declined ❌ All The Pending Join Request**")
-    
+    await update.message.edit("**Задача завершена** ✓ **Отклонены ❌ все ожидающие запросы на вступление**")
