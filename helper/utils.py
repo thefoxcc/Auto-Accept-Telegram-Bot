@@ -3,13 +3,12 @@ from pytz import timezone
 from config import Config
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-
-OnWelcBtn = InlineKeyboardButton(text='Welcome On ✅', callback_data='welc-on')
-OffWelcBtn = InlineKeyboardButton(text='Welcome Off ❌', callback_data='welc-off')
-OnLeavBtn = InlineKeyboardButton(text='Leave On ✅', callback_data='leav-on')
-OffLeavBtn = InlineKeyboardButton(text='Leave Off ❌', callback_data='leav-off')
-OnAutoacceptBtn = InlineKeyboardButton(text='Auto accept On ✅', callback_data='autoaccept-on')
-OffAutoacceptBtn = InlineKeyboardButton(text='Auto accept Off ❌', callback_data='autoaccept-off')
+OnWelcBtn = InlineKeyboardButton(text='Добро пожаловать Вкл ✅', callback_data='welc-on')
+OffWelcBtn = InlineKeyboardButton(text='Добро пожаловать Выкл ❌', callback_data='welc-off')
+OnLeavBtn = InlineKeyboardButton(text='Пока Вкл ✅', callback_data='leav-on')
+OffLeavBtn = InlineKeyboardButton(text='Пока Выкл ❌', callback_data='leav-off')
+OnAutoacceptBtn = InlineKeyboardButton(text='Авто подтверждение Вкл ✅', callback_data='autoaccept-on')
+OffAutoacceptBtn = InlineKeyboardButton(text='Авто подтверждение Выкл ❌', callback_data='autoaccept-off')
 
 async def send_log(b, u):
     if Config.LOG_CHANNEL is not None:
@@ -18,5 +17,5 @@ async def send_log(b, u):
         time = curr.strftime('%I:%M:%S %p')
         await b.send_message(
             Config.LOG_CHANNEL,
-            f"**--Nᴇᴡ Uꜱᴇʀ Sᴛᴀʀᴛᴇᴅ Tʜᴇ Bᴏᴛ--**\n\nUꜱᴇʀ: {u.mention}\nIᴅ: `{u.id}`\nUɴ: @{u.username}\n\nDᴀᴛᴇ: {date}\nTɪᴍᴇ: {time}\n\nBy: {b.mention}"
+            f"**--Новый пользователь начал использовать бота--**\n\nПользователь: {u.mention}\nID: `{u.id}`\nИмя пользователя: @{u.username}\n\nДата: {date}\nВремя: {time}\n\nОт: {b.mention}"
         )
